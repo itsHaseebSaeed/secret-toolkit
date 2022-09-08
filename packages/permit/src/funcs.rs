@@ -72,7 +72,7 @@ pub fn pubkey_to_account(pubkey: &Binary) -> CanonicalAddr {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{PermitParams, PermitSignature, PubKey, TokenPermissions};
+    use crate::{GalacticPoolsPermissions, PermitParams, PermitSignature, PubKey};
     use cosmwasm_std::testing::mock_dependencies;
 
     #[test]
@@ -83,12 +83,12 @@ mod tests {
 
         let token = "secret1rf03820fp8gngzg2w02vd30ns78qkc8rg8dxaq".to_string();
 
-        let permit: Permit<TokenPermissions> = Permit{
+        let permit: Permit<GalacticPoolsPermissions> = Permit{
             params: PermitParams {
                 allowed_tokens: vec![token.clone()],
                 permit_name: "memo_secret1rf03820fp8gngzg2w02vd30ns78qkc8rg8dxaq".to_string(),
                 chain_id: "pulsar-2".to_string(),
-                permissions: vec![TokenPermissions::History]
+                permissions: vec![GalacticPoolsPermissions::Owner]
             },
             signature: PermitSignature {
                 pub_key: PubKey {
