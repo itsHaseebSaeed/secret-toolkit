@@ -8,7 +8,7 @@ use cosmwasm_std::{Binary, CanonicalAddr, Uint128};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-pub struct Permit<Permission: Permissions = TokenPermissions> {
+pub struct Permit<Permission: Permissions> {
     #[serde(bound = "")]
     pub params: PermitParams<Permission>,
     pub signature: PermitSignature,
@@ -26,7 +26,7 @@ impl<Permission: Permissions> Permit<Permission> {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-pub struct PermitParams<Permission: Permissions = TokenPermissions> {
+pub struct PermitParams<Permission: Permissions> {
     pub allowed_tokens: Vec<String>,
     pub permit_name: String,
     pub chain_id: String,
@@ -60,7 +60,7 @@ impl PubKey {
 #[remain::sorted]
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-pub struct SignedPermit<Permission: Permissions = TokenPermissions> {
+pub struct SignedPermit<Permission: Permissions> {
     /// ignored
     pub account_number: Uint128,
     /// ignored, no Env in query
@@ -141,7 +141,7 @@ impl Default for Coin {
 #[remain::sorted]
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-pub struct PermitMsg<Permission: Permissions = TokenPermissions> {
+pub struct PermitMsg<Permission: Permissions> {
     pub r#type: String,
     #[serde(bound = "")]
     pub value: PermitContent<Permission>,
@@ -160,7 +160,7 @@ impl<Permission: Permissions> PermitMsg<Permission> {
 #[remain::sorted]
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-pub struct PermitContent<Permission: Permissions = TokenPermissions> {
+pub struct PermitContent<Permission: Permissions> {
     pub allowed_tokens: Vec<String>,
     #[serde(bound = "")]
     pub permissions: Vec<Permission>,
@@ -193,6 +193,25 @@ impl<T> Permissions for T where
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum TokenPermissions {
+    /// Allowance for SNIP-20 - Permission to query allowance of the owner & spender
+    Allowance,
+    /// Balance for SNIP-20 - Permission to query balance
+    Balance,
+    /// History for SNIP-20 - Permission to query transfer_history & transaction_hisotry
+    History,
+    /// Owner permission indicates that the bearer of this permit should be granted all
+    /// the access of the creator/signer of the permit.  SNIP-721 uses this to grant
+    /// viewing access to all data that the permit creator owns and is whitelisted for.
+    /// For SNIP-721 use, a permit with Owner permission should NEVER be given to
+    /// anyone else.  If someone wants to share private data, they should whitelist
+    /// the address they want to share with via a SetWhitelistedApproval tx, and that
+    /// address will view the data by creating their own permit with Owner permission
+    Owner,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum GalacticPoolsPermissions {
     /// Allowance for SNIP-20 - Permission to query allowance of the owner & spender
     Allowance,
     /// Balance for SNIP-20 - Permission to query balance

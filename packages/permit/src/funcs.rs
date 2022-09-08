@@ -83,7 +83,7 @@ mod tests {
 
         let token = "secret1rf03820fp8gngzg2w02vd30ns78qkc8rg8dxaq".to_string();
 
-        let permit: Permit = Permit{
+        let permit: Permit<TokenPermissions> = Permit{
             params: PermitParams {
                 allowed_tokens: vec![token.clone()],
                 permit_name: "memo_secret1rf03820fp8gngzg2w02vd30ns78qkc8rg8dxaq".to_string(),
